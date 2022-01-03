@@ -2,11 +2,17 @@ import mongoose from "mongoose";
 
 const ticketSchema = mongoose.Schema({
   title: String,
-  body: String,
+  description: String,
   author: String,
   priority: String,
-  resolved: Boolean,
-  comments: [String],
+  resolved: {
+    type: Boolean,
+    default: false,
+  },
+  comments: {
+    type: [String],
+    default: [],
+  },
   createdAt: {
     type: Date,
     default: new Date(),

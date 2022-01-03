@@ -4,12 +4,13 @@
 
 .form {
   width: 30vw;
-  padding: 1%;
-}
-
-.form * {
-  margin-top: 1vh;
+  padding: 2%;
 }
 
 .submit-btn {
+  width: 5vw;
+}
+
+.description-box {
+  height: 15vh;
 }

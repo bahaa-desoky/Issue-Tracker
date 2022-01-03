@@ -8,3 +8,12 @@ export const getTickets = () => async (dispatch) => {
     console.log(error.message);
   }
 };
+
+export const createTicket = (ticket) => async (dispatch) => {
+  try {
+    const { data } = await api.createTicket(ticket);
+    dispatch({ type: "CREATE", payload: data });
+  } catch (error) {
+    console.log(error.message);
+  }
+};
