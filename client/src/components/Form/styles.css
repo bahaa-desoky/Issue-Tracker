@@ -1,16 +1,12 @@
-.priority-select {
-  width: 10vw;
-}
-
 .form {
   width: 30vw;
   padding: 2%;
 }
 
-.submit-btn {
-  width: 5vw;
+.priority-select {
+  width: 40%;
 }
 
-.description-box {
-  height: 15vh;
+.submit-btn {
+  width: 5vw;
 }

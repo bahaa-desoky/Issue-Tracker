@@ -20,7 +20,13 @@ const App = () => {
       <ResponsiveAppBar />
       <Grid container alignItems="stretch" spacing={3}>
         <Grid item xs={12} sm={8}>
-          <Tickets />
+          <Box
+            sx={{
+              marginTop: 2,
+            }}
+          >
+            <Tickets />
+          </Box>
         </Grid>
         <Grid item xs={12} sm={4}>
           <Box

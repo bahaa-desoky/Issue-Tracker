@@ -15,6 +15,7 @@ import { createTicket } from "../../actions/tickets.js";
 const Form = () => {
   const [ticketData, setTicketData] = useState({
     author: "",
+    project: "",
     title: "",
     description: "",
     priority: "",
@@ -50,6 +51,23 @@ const Form = () => {
             value={ticketData.author}
             onChange={(e) =>
               setTicketData({ ...ticketData, author: e.target.value })
+            } // ...ticketData lets the other fields persist
+          />
+        </Box>
+        {/* project field */}
+        <Box
+          sx={{
+            marginTop: marginTop,
+          }}
+        >
+          <TextField
+            name="project"
+            variant="outlined"
+            label="Project name"
+            fullWidth
+            value={ticketData.project}
+            onChange={(e) =>
+              setTicketData({ ...ticketData, project: e.target.value })
             } // ...ticketData lets the other fields persist
           />
         </Box>
