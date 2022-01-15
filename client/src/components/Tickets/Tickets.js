@@ -10,6 +10,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TablePagination,
   TableSortLabel,
   Typography,
   IconButton,
@@ -128,7 +129,13 @@ function Row({ row, currentId, setCurrentId }) {
               <Typography variant="h6" gutterBottom component="div">
                 Issue Description
               </Typography>
-              <Typography variant="h7">{row.description}</Typography>
+              <Typography
+                variant="h7"
+                paragraph
+                style={{ wordBreak: "break-word" }}
+              >
+                {row.description}
+              </Typography>
             </Box>
           </Collapse>
         </TableCell>
@@ -138,8 +145,18 @@ function Row({ row, currentId, setCurrentId }) {
 }
 
 const Tickets = ({ currentId, setCurrentId }) => {
-  // from reducers
-  const tickets = useSelector((state) => state.tickets);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [page, setPage] = useState(0);
+  const tickets = useSelector((state) => state.tickets); // from reducers
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   return !tickets.length ? (
     <Typography variant="h5">
@@ -147,7 +164,17 @@ const Tickets = ({ currentId, setCurrentId }) => {
     </Typography>
   ) : (
     <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="ticket-table">
+      <Table aria-label="ticket-table">
+        <colgroup>
+          <col style={{ width: "1%" }} />
+          <col style={{ width: "10%" }} />
+          <col style={{ width: "50%" }} />
+          <col style={{ width: "10%" }} />
+          <col style={{ width: "10%" }} />
+          <col style={{ width: "10%" }} />
+          <col style={{ width: "1%" }} />
+          <col style={{ width: "1%" }} />
+        </colgroup>
         <TableHead>
           <TableRow>
             <TableCell />
@@ -157,21 +184,32 @@ const Tickets = ({ currentId, setCurrentId }) => {
             <TableCell>Priority</TableCell>
             <TableCell>Status</TableCell>
             {/* since edit and delete columns only have an icon they can be narrow */}
-            <TableCell sx={{ width: "1%" }} />
-            <TableCell sx={{ width: "1%" }} />
+            <TableCell />
+            <TableCell />
           </TableRow>
         </TableHead>
         <TableBody>
-          {getTableData(tickets).map((row) => (
-            <Row
-              key={row._id}
-              row={row}
-              currentId={currentId}
-              setCurrentId={setCurrentId}
-            />
-          ))}
+          {getTableData(tickets)
+            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            .map((row) => (
+              <Row
+                key={row._id}
+                row={row}
+                currentId={currentId}
+                setCurrentId={setCurrentId}
+              />
+            ))}
         </TableBody>
       </Table>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={tickets.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
     </TableContainer>
   );
 };
