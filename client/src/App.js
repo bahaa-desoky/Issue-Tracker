@@ -5,10 +5,11 @@ import Tickets from "./components/Tickets/Tickets.js";
 import Form from "./components/Form/Form.js";
 import { getTickets } from "./actions/tickets";
 import { useDispatch } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Grid, Box } from "@mui/material";
 
 const App = () => {
+  const [currentId, setCurrentId] = useState(null);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -25,7 +26,7 @@ const App = () => {
               marginTop: 2,
             }}
           >
-            <Tickets />
+            <Tickets currentId={currentId} setCurrentId={setCurrentId} />
           </Box>
         </Grid>
         <Grid item xs={12} sm={4}>
@@ -34,7 +35,7 @@ const App = () => {
               marginTop: 2,
             }}
           >
-            <Form />
+            <Form currentId={currentId} setCurrentId={setCurrentId} />
           </Box>
         </Grid>
       </Grid>

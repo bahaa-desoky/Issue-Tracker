@@ -72,7 +72,7 @@ export default function SearchAppBar() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" style={{ borderRadius: "10px" }}>
+      <AppBar position="static" style={{ borderRadius: "5px" }}>
         <Toolbar>
           <Typography
             variant="h6"

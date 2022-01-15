@@ -7,12 +7,15 @@ import {
   Paper,
   MenuItem,
   Box,
+  Grid,
+  IconButton,
 } from "@mui/material";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { createTicket } from "../../actions/tickets.js";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { createTicket, updateTicket } from "../../actions/tickets.js";
+import ClearIcon from "@mui/icons-material/Clear";
 
-const Form = () => {
+const Form = ({ currentId, setCurrentId }) => {
   const [ticketData, setTicketData] = useState({
     author: "",
     project: "",
@@ -22,9 +25,37 @@ const Form = () => {
   });
   const dispatch = useDispatch();
 
+  const ticket = useSelector((state) => {
+    console.log(currentId);
+    return currentId
+      ? state.tickets.find((ticket) => ticket._id == currentId)
+      : null;
+  });
+
+  useEffect(() => {
+    // if we have a ticket that exists and should be edited, then set the form data fields to that ticket's info
+    // we monitor when this is true by putting the ticket in the dependency list
+    if (ticket) setTicketData(ticket);
+  }, [ticket]);
+
   const handleSubmit = (e) => {
     e.preventDefault(); // this prevents browser refresh
-    dispatch(createTicket(ticketData));
+    if (currentId) {
+      dispatch(updateTicket(currentId, ticketData));
+    } else {
+      dispatch(createTicket(ticketData));
+    }
+  };
+
+  const clear = () => {
+    setCurrentId(null);
+    setTicketData({
+      author: "",
+      project: "",
+      title: "",
+      description: "",
+      priority: "",
+    });
   };
 
   const marginTop = 1;
@@ -32,11 +63,12 @@ const Form = () => {
     <Paper className="form">
       <form
         autoComplete="off"
-        noValidate
         onSubmit={handleSubmit}
         style={{ display: "grid" }}
       >
-        <Typography variant="h6">Create a new ticket</Typography>
+        <Typography variant="h6">
+          {currentId ? "Edit an existing" : "Create a new"} ticket
+        </Typography>
         {/* author field, todo: make it only ever the logged in user */}
         <Box
           sx={{
@@ -44,14 +76,15 @@ const Form = () => {
           }}
         >
           <TextField
+            required
             name="author"
             variant="outlined"
             label="Author"
             fullWidth
             value={ticketData.author}
-            onChange={(e) =>
-              setTicketData({ ...ticketData, author: e.target.value })
-            } // ...ticketData lets the other fields persist
+            onChange={(e) => {
+              setTicketData({ ...ticketData, author: e.target.value });
+            }} // ...ticketData lets the other fields persist
           />
         </Box>
         {/* project field */}
@@ -61,6 +94,7 @@ const Form = () => {
           }}
         >
           <TextField
+            required
             name="project"
             variant="outlined"
             label="Project name"
@@ -78,6 +112,7 @@ const Form = () => {
           }}
         >
           <TextField
+            required
             name="title"
             variant="outlined"
             label="Title"
@@ -95,6 +130,7 @@ const Form = () => {
           }}
         >
           <TextField
+            required
             multiline
             rows={4}
             className="description-box"
@@ -115,6 +151,7 @@ const Form = () => {
           }}
         >
           <TextField
+            required
             className="priority-select"
             value={ticketData.priority}
             onChange={(e) =>
@@ -133,9 +170,18 @@ const Form = () => {
             marginTop: marginTop,
           }}
         >
-          <Button variant="contained" type="submit" className="submit-btn">
-            Create
-          </Button>
+          <Grid container spacing={1}>
+            <Grid item>
+              <Button variant="contained" type="submit" className="submit-btn">
+                {currentId ? "Update" : "Create"}
+              </Button>
+            </Grid>
+            <Grid item>
+              <IconButton onClick={() => clear()}>
+                <ClearIcon />
+              </IconButton>
+            </Grid>
+          </Grid>
         </Box>
       </form>
     </Paper>

@@ -1,12 +1,7 @@
 .form {
-  width: 30vw;
   padding: 2%;
 }
 
 .priority-select {
   width: 40%;
-}
-
-.submit-btn {
-  width: 5vw;
 }

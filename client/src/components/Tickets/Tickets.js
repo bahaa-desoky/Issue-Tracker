@@ -1,33 +1,50 @@
-import React from "react";
-import Ticket from "./Ticket/Ticket";
-import { useSelector } from "react-redux";
+import { React, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import {
-  CircularProgress,
+  Box,
+  Collapse,
   Paper,
-  IconButton,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
+  TableSortLabel,
+  Typography,
+  IconButton,
 } from "@mui/material";
 import CircleSharpIcon from "@mui/icons-material/CircleSharp";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { deleteTicket } from "../../actions/tickets.js";
 
-const createRow = (id, date, title, author, priority, status, comments) => {
-  return { id, date, title, author, priority, status, comments };
+const createRow = (
+  _id,
+  date,
+  title,
+  description,
+  author,
+  priority,
+  status,
+  comments
+) => {
+  return { _id, date, title, description, author, priority, status, comments };
 };
 
 const getTableData = (data) => {
   var rows = [];
   data.forEach((element) => {
     var date = new Date(element.createdAt);
+    date = date.toISOString().split("T")[0];
     rows.push(
       createRow(
         element._id,
-        date.toISOString().split("T")[0],
+        date,
         element.project + ": " + element.title,
+        element.description,
         element.author,
         element.priority == "1"
           ? "High"
@@ -35,78 +52,123 @@ const getTableData = (data) => {
           ? "Medium"
           : "Low",
         element.resolved == false ? "Ongoing" : "Resolved",
-        element.comments
+        element.comments // to be used at a later time
       )
     );
   });
   return rows;
 };
 
-const handleTicketPress = (ticket) => {
-  console.log(ticket);
-};
+function Row({ row, currentId, setCurrentId }) {
+  const dispatch = useDispatch();
+  const [open, setOpen] = useState(false);
 
-const Tickets = () => {
+  return (
+    <>
+      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
+        <TableCell>
+          <IconButton
+            aria-label="expand row"
+            size="small"
+            onClick={() => setOpen(!open)}
+          >
+            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+          </IconButton>
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {row.date}
+        </TableCell>
+        <TableCell align="left">{row.title}</TableCell>
+        <TableCell align="left">{row.author}</TableCell>
+        <TableCell align="left">
+          <CircleSharpIcon
+            sx={{
+              marginRight: "0.5em",
+              fontSize: "0.7em",
+              color:
+                row.priority == "High"
+                  ? "red"
+                  : row.priority == "Medium"
+                  ? "#FFE200"
+                  : "#A7F432",
+            }}
+          ></CircleSharpIcon>
+          {row.priority}
+        </TableCell>
+        <TableCell align="left">
+          <CircleSharpIcon
+            sx={{
+              marginRight: "0.5em",
+              fontSize: "0.7em",
+              color: row.status == "Resolved" ? "#03AC13" : "blue",
+            }}
+          ></CircleSharpIcon>
+          {row.status}
+        </TableCell>
+        <TableCell>
+          {/* through props drilling, we set the current id of the ticket to be edited */}
+          <IconButton onClick={() => setCurrentId(row._id)}>
+            <EditIcon
+              fontSize="small"
+              color={currentId == row._id ? "primary" : "red"}
+            />
+          </IconButton>
+        </TableCell>
+        <TableCell>
+          <IconButton onClick={() => dispatch(deleteTicket(row._id))}>
+            <DeleteIcon fontSize="small" />
+          </IconButton>
+        </TableCell>
+      </TableRow>
+      {/* collapsible description  */}
+      <TableRow>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
+          <Collapse in={open} timeout="auto" unmountOnExit>
+            <Box sx={{ margin: 1 }}>
+              <Typography variant="h6" gutterBottom component="div">
+                Issue Description
+              </Typography>
+              <Typography variant="h7">{row.description}</Typography>
+            </Box>
+          </Collapse>
+        </TableCell>
+      </TableRow>
+    </>
+  );
+}
+
+const Tickets = ({ currentId, setCurrentId }) => {
   // from reducers
   const tickets = useSelector((state) => state.tickets);
+
   return !tickets.length ? (
-    <CircularProgress />
+    <Typography variant="h5">
+      No tickets yet. Please add a ticket to get started.
+    </Typography>
   ) : (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="ticket-table">
         <TableHead>
           <TableRow>
+            <TableCell />
             <TableCell>Date</TableCell>
             <TableCell>Project: Issue</TableCell>
             <TableCell>Author</TableCell>
             <TableCell>Priority</TableCell>
             <TableCell>Status</TableCell>
-            <TableCell></TableCell>
+            {/* since edit and delete columns only have an icon they can be narrow */}
+            <TableCell sx={{ width: "1%" }} />
+            <TableCell sx={{ width: "1%" }} />
           </TableRow>
         </TableHead>
         <TableBody>
           {getTableData(tickets).map((row) => (
-            <TableRow
-              key={row.id}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                {row.date}
-              </TableCell>
-              <TableCell align="left">{row.title}</TableCell>
-              <TableCell align="left">{row.author}</TableCell>
-              <TableCell align="left">
-                <CircleSharpIcon
-                  sx={{
-                    marginRight: "0.5em",
-                    fontSize: "0.7em",
-                    color:
-                      row.priority == "High"
-                        ? "red"
-                        : row.priority == "Medium"
-                        ? "#FFE200"
-                        : "#A7F432",
-                  }}
-                ></CircleSharpIcon>
-                {row.priority}
-              </TableCell>
-              {/* status: resolved, ongoing */}
-              <TableCell align="left">
-                <CircleSharpIcon
-                  sx={{
-                    marginRight: "0.5em",
-                    fontSize: "0.7em",
-                    color: row.status == "Resolved" ? "#03AC13" : "blue",
-                  }}
-                ></CircleSharpIcon>
-                {row.status}
-              </TableCell>
-              <TableCell align="right">
-                <IconButton onClick={handleTicketPress(row)}>
-                  <ArrowForwardIcon color="primary" />
-                </IconButton>
-              </TableCell>
-            </TableRow>
+            <Row
+              key={row._id}
+              row={row}
+              currentId={currentId}
+              setCurrentId={setCurrentId}
+            />
           ))}
         </TableBody>
       </Table>
