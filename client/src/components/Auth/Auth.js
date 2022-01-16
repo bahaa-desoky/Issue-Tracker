@@ -13,6 +13,7 @@ import { GoogleLogin } from "react-google-login";
 import GoogleIcon from "./google";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { AUTH } from "../../constants/actionTypes";
 
 const Auth = () => {
   const [passwordVisibility, setPasswordVisibility] = useState(false);
@@ -25,7 +26,7 @@ const Auth = () => {
     const token = response.tokenId;
 
     try {
-      dispatch({ type: "AUTH", data: { result, token } });
+      dispatch({ type: AUTH, data: { result, token } });
       navigate("/");
     } catch (error) {
       console.log(error);
