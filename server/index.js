@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 import ticketRoutes from "./routes/tickets.js";
+import userRoutes from "./routes/users.js";
 
 const app = express();
 dotenv.config(); // this is to use environmental variables

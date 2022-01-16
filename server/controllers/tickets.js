@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
-import TicketBody from "../models/ticketBody.js";
+import TicketModel from "../models/ticketModel.js";
 
 export const getTickets = async (request, response) => {
   try {
-    const tickets = await TicketBody.find();
+    const tickets = await TicketModel.find();
     response.status(200).json(tickets);
   } catch (error) {
     response.status(404).json({ message: error.message });
@@ -12,7 +12,7 @@ export const getTickets = async (request, response) => {
 
 export const createTicket = async (request, response) => {
   const ticket = request.body;
-  const newTicket = new TicketBody(ticket);
+  const newTicket = new TicketModel(ticket);
   try {
     await newTicket.save();
     response.status(201).json(newTicket);
@@ -27,7 +27,7 @@ export const updateTicket = async (request, response) => {
   if (!mongoose.Types.ObjectId.isValid(id))
     return response.status(404).send("Invalid id");
 
-  const updatedTicket = await TicketBody.findByIdAndUpdate(
+  const updatedTicket = await TicketModel.findByIdAndUpdate(
     id,
     { ...request.body, id },
     {
@@ -43,6 +43,6 @@ export const deleteTicket = async (request, response) => {
   if (!mongoose.Types.ObjectId.isValid(id))
     return response.status(404).send("Invalid id");
 
-  await TicketBody.findByIdAndRemove(id);
+  await TicketModel.findByIdAndRemove(id);
   response.json("Deleted ticket");
 };
