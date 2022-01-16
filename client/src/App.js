@@ -1,44 +1,20 @@
 import React from "react";
-import ResponsiveAppBar from "./components/Navbar/Navbar";
 import "./styles.css";
-import Tickets from "./components/Tickets/Tickets.js";
-import Form from "./components/Form/Form.js";
-import { getTickets } from "./actions/tickets";
-import { useDispatch } from "react-redux";
-import { useEffect, useState } from "react";
-import { Grid, Box } from "@mui/material";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "./components/Home/Home";
+import Auth from "./components/Auth/Auth";
+import NavBar from "./components/Navbar/Navbar";
 
 const App = () => {
-  const [currentId, setCurrentId] = useState(null);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(getTickets());
-  }, [dispatch]);
-
   return (
     <div>
-      <ResponsiveAppBar />
-      <Grid container alignItems="stretch" spacing={3}>
-        <Grid item xs={12} sm={8}>
-          <Box
-            sx={{
-              marginTop: 2,
-            }}
-          >
-            <Tickets currentId={currentId} setCurrentId={setCurrentId} />
-          </Box>
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <Box
-            sx={{
-              marginTop: 2,
-            }}
-          >
-            <Form currentId={currentId} setCurrentId={setCurrentId} />
-          </Box>
-        </Grid>
-      </Grid>
+      <BrowserRouter>
+        <NavBar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/auth" element={<Auth />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 };

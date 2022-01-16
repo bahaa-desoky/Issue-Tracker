@@ -47,12 +47,12 @@ const getTableData = (data) => {
         element.project + ": " + element.title,
         element.description,
         element.author,
-        element.priority == "1"
+        element.priority === "1"
           ? "High"
-          : element.priority == "2"
+          : element.priority === "2"
           ? "Medium"
           : "Low",
-        element.resolved == false ? "Ongoing" : "Resolved",
+        element.resolved === false ? "Ongoing" : "Resolved",
         element.comments // to be used at a later time
       )
     );
@@ -87,9 +87,9 @@ function Row({ row, currentId, setCurrentId }) {
               marginRight: "0.5em",
               fontSize: "0.7em",
               color:
-                row.priority == "High"
+                row.priority === "High"
                   ? "red"
-                  : row.priority == "Medium"
+                  : row.priority === "Medium"
                   ? "#FFE200"
                   : "#A7F432",
             }}
@@ -101,7 +101,7 @@ function Row({ row, currentId, setCurrentId }) {
             sx={{
               marginRight: "0.5em",
               fontSize: "0.7em",
-              color: row.status == "Resolved" ? "#03AC13" : "blue",
+              color: row.status === "Resolved" ? "#03AC13" : "blue",
             }}
           ></CircleSharpIcon>
           {row.status}
@@ -111,7 +111,7 @@ function Row({ row, currentId, setCurrentId }) {
           <IconButton onClick={() => setCurrentId(row._id)}>
             <EditIcon
               fontSize="small"
-              color={currentId == row._id ? "primary" : "red"}
+              color={currentId === row._id ? "primary" : "red"}
             />
           </IconButton>
         </TableCell>

@@ -1,5 +1,4 @@
 import React from "react";
-import "./styles.css";
 import {
   TextField,
   Button,
@@ -16,8 +15,9 @@ import { createTicket, updateTicket } from "../../actions/tickets.js";
 import ClearIcon from "@mui/icons-material/Clear";
 
 const Form = ({ currentId, setCurrentId }) => {
+  const user = JSON.parse(localStorage.getItem("profile"));
   const [ticketData, setTicketData] = useState({
-    author: "",
+    author: user ? user.result.name : "",
     project: "",
     title: "",
     description: "",
@@ -50,7 +50,7 @@ const Form = ({ currentId, setCurrentId }) => {
   const clear = () => {
     setCurrentId(null);
     setTicketData({
-      author: "",
+      author: user ? user.result.name : "",
       project: "",
       title: "",
       description: "",
@@ -58,131 +58,110 @@ const Form = ({ currentId, setCurrentId }) => {
     });
   };
 
-  const marginTop = 1;
   return (
-    <Paper className="form">
+    <Paper>
       <form
         autoComplete="off"
         onSubmit={handleSubmit}
-        style={{ display: "grid" }}
+        style={{ display: "grid", padding: "2%" }}
       >
-        <Typography variant="h6">
-          {currentId ? "Edit an existing" : "Create a new"} ticket
-        </Typography>
-        {/* author field, todo: make it only ever the logged in user */}
-        <Box
-          sx={{
-            marginTop: marginTop,
-          }}
-        >
-          <TextField
-            required
-            name="author"
-            variant="outlined"
-            label="Author"
-            fullWidth
-            value={ticketData.author}
-            onChange={(e) => {
-              setTicketData({ ...ticketData, author: e.target.value });
-            }} // ...ticketData lets the other fields persist
-          />
-        </Box>
-        {/* project field */}
-        <Box
-          sx={{
-            marginTop: marginTop,
-          }}
-        >
-          <TextField
-            required
-            name="project"
-            variant="outlined"
-            label="Project name"
-            fullWidth
-            value={ticketData.project}
-            onChange={(e) =>
-              setTicketData({ ...ticketData, project: e.target.value })
-            } // ...ticketData lets the other fields persist
-          />
-        </Box>
-        {/* title field */}
-        <Box
-          sx={{
-            marginTop: marginTop,
-          }}
-        >
-          <TextField
-            required
-            name="title"
-            variant="outlined"
-            label="Title"
-            fullWidth
-            value={ticketData.title}
-            onChange={(e) =>
-              setTicketData({ ...ticketData, title: e.target.value })
-            }
-          />
-        </Box>
-        {/* description field */}
-        <Box
-          sx={{
-            marginTop: marginTop,
-          }}
-        >
-          <TextField
-            required
-            multiline
-            rows={4}
-            className="description-box"
-            name="description"
-            variant="outlined"
-            label="Description"
-            fullWidth
-            value={ticketData.description}
-            onChange={(e) =>
-              setTicketData({ ...ticketData, description: e.target.value })
-            }
-          />
-        </Box>
-        {/* priority selector */}
-        <Box
-          sx={{
-            marginTop: marginTop,
-          }}
-        >
-          <TextField
-            required
-            className="priority-select"
-            value={ticketData.priority}
-            onChange={(e) =>
-              setTicketData({ ...ticketData, priority: e.target.value })
-            }
-            select // tell TextField to render select
-            label="Priority"
-          >
-            <MenuItem value={1}>High</MenuItem>
-            <MenuItem value={2}>Medium</MenuItem>
-            <MenuItem value={3}>Low</MenuItem>
-          </TextField>
-        </Box>
-        <Box
-          sx={{
-            marginTop: marginTop,
-          }}
-        >
-          <Grid container spacing={1}>
-            <Grid item>
-              <Button variant="contained" type="submit" className="submit-btn">
-                {currentId ? "Update" : "Create"}
-              </Button>
-            </Grid>
-            <Grid item>
-              <IconButton onClick={() => clear()}>
-                <ClearIcon />
-              </IconButton>
+        <Grid container spacing={1}>
+          <Grid item xs={12} sm={12}>
+            <Typography variant="h6">
+              {currentId ? "Edit an existing" : "Create a new"} ticket
+            </Typography>
+          </Grid>
+          <Grid item xs={12} sm={12}>
+            <TextField
+              disabled
+              name="author"
+              variant="outlined"
+              label="Author"
+              fullWidth
+              value={ticketData.author}
+              onChange={(e) => {
+                setTicketData({ ...ticketData, author: e.target.value });
+              }} // ...ticketData lets the other fields persist
+            />
+          </Grid>
+          <Grid item xs={12} sm={12}>
+            <TextField
+              required
+              name="project"
+              variant="outlined"
+              label="Project name"
+              fullWidth
+              value={ticketData.project}
+              onChange={(e) =>
+                setTicketData({ ...ticketData, project: e.target.value })
+              } // ...ticketData lets the other fields persist
+            />
+          </Grid>
+          <Grid item xs={12} sm={12}>
+            <TextField
+              required
+              name="title"
+              variant="outlined"
+              label="Title"
+              fullWidth
+              value={ticketData.title}
+              onChange={(e) =>
+                setTicketData({ ...ticketData, title: e.target.value })
+              }
+            />
+          </Grid>
+          <Grid item xs={12} sm={12}>
+            <TextField
+              required
+              multiline
+              rows={4}
+              className="description-box"
+              name="description"
+              variant="outlined"
+              label="Description"
+              fullWidth
+              value={ticketData.description}
+              onChange={(e) =>
+                setTicketData({ ...ticketData, description: e.target.value })
+              }
+            />
+          </Grid>
+          <Grid item xs={12} sm={12}>
+            <TextField
+              sx={{ width: "40%" }}
+              required
+              className="priority-select"
+              value={ticketData.priority}
+              onChange={(e) =>
+                setTicketData({ ...ticketData, priority: e.target.value })
+              }
+              select // tell TextField to render select
+              label="Priority"
+            >
+              <MenuItem value={1}>High</MenuItem>
+              <MenuItem value={2}>Medium</MenuItem>
+              <MenuItem value={3}>Low</MenuItem>
+            </TextField>
+          </Grid>
+          <Grid item xs={12} sm={12}>
+            <Grid container spacing={1}>
+              <Grid item>
+                <Button
+                  variant="contained"
+                  type="submit"
+                  className="submit-btn"
+                >
+                  {currentId ? "Update" : "Create"}
+                </Button>
+              </Grid>
+              <Grid item>
+                <IconButton onClick={() => clear()}>
+                  <ClearIcon />
+                </IconButton>
+              </Grid>
             </Grid>
           </Grid>
-        </Box>
+        </Grid>
       </form>
     </Paper>
   );
