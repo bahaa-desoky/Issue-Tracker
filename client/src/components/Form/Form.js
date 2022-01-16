@@ -17,7 +17,7 @@ import ClearIcon from "@mui/icons-material/Clear";
 const Form = ({ currentId, setCurrentId }) => {
   const user = JSON.parse(localStorage.getItem("profile"));
   const [ticketData, setTicketData] = useState({
-    author: user ? user.result.name : "",
+    name: user ? user.result.name : "",
     project: "",
     title: "",
     description: "",
@@ -26,7 +26,6 @@ const Form = ({ currentId, setCurrentId }) => {
   const dispatch = useDispatch();
 
   const ticket = useSelector((state) => {
-    console.log(currentId);
     return currentId
       ? state.tickets.find((ticket) => ticket._id == currentId)
       : null;
@@ -50,7 +49,6 @@ const Form = ({ currentId, setCurrentId }) => {
   const clear = () => {
     setCurrentId(null);
     setTicketData({
-      author: user ? user.result.name : "",
       project: "",
       title: "",
       description: "",
@@ -70,19 +68,6 @@ const Form = ({ currentId, setCurrentId }) => {
             <Typography variant="h6">
               {currentId ? "Edit an existing" : "Create a new"} ticket
             </Typography>
-          </Grid>
-          <Grid item xs={12} sm={12}>
-            <TextField
-              disabled
-              name="author"
-              variant="outlined"
-              label="Author"
-              fullWidth
-              value={ticketData.author}
-              onChange={(e) => {
-                setTicketData({ ...ticketData, author: e.target.value });
-              }} // ...ticketData lets the other fields persist
-            />
           </Grid>
           <Grid item xs={12} sm={12}>
             <TextField

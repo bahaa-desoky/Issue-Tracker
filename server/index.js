@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 import ticketRoutes from "./routes/tickets.js";
-import userRoutes from "./routes/users.js";
+import userRoutes from "./routes/auth.js";
 
 const app = express();
 dotenv.config(); // this is to use environmental variables
@@ -15,6 +15,7 @@ app.use(cors());
 
 // connect routes
 app.use("/tickets", ticketRoutes);
+app.use("/auth", userRoutes);
 
 const CONNECTION_URL = process.env.CONNECTION_URL;
 const PORT = process.env.PORT;

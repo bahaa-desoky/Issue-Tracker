@@ -9,24 +9,25 @@ import {
   Avatar,
   Button,
 } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { LOGOUT } from "../../constants/actionTypes";
 
 const NavBar = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const logout = () => {
     dispatch({ type: LOGOUT });
     setUser(null);
-    navigate("/");
+    navigate("/auth");
   };
 
   useEffect(() => {
     const token = user ? user.token : null;
     setUser(JSON.parse(localStorage.getItem("profile")));
-  }, []);
+  }, [location]); // user should be set as soon as auth is succesful, i.e. when we redirect back to home
 
   return (
     <Box sx={{ flexGrow: 1 }}>

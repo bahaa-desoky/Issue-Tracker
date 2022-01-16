@@ -1,6 +1,6 @@
 // routes related to the users/auth of the app
 import express from "express";
-import { signIn, signUp } from "../controllers/users.js";
+import { signIn, signUp } from "../controllers/auth.js";
 
 const router = express.Router();
 

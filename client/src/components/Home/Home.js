@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { Grid, Box } from "@mui/material";
+import { Grid, Box, Paper, Typography } from "@mui/material";
 import { getTickets } from "../../actions/tickets.js";
 import Tickets from "../Tickets/Tickets.js";
 import Form from "../Form/Form.js";

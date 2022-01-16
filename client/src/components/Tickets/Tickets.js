@@ -27,12 +27,12 @@ const createRow = (
   date,
   title,
   description,
-  author,
+  name,
   priority,
   status,
   comments
 ) => {
-  return { _id, date, title, description, author, priority, status, comments };
+  return { _id, date, title, description, name, priority, status, comments };
 };
 
 const getTableData = (data) => {
@@ -46,7 +46,7 @@ const getTableData = (data) => {
         date,
         element.project + ": " + element.title,
         element.description,
-        element.author,
+        element.name,
         element.priority === "1"
           ? "High"
           : element.priority === "2"
@@ -80,7 +80,7 @@ function Row({ row, currentId, setCurrentId }) {
           {row.date}
         </TableCell>
         <TableCell align="left">{row.title}</TableCell>
-        <TableCell align="left">{row.author}</TableCell>
+        <TableCell align="left">{row.name}</TableCell>
         <TableCell align="left">
           <CircleSharpIcon
             sx={{
@@ -169,7 +169,7 @@ const Tickets = ({ currentId, setCurrentId }) => {
           <col style={{ width: "1%" }} />
           <col style={{ width: "10%" }} />
           <col style={{ width: "50%" }} />
-          <col style={{ width: "10%" }} />
+          <col style={{ width: "20%" }} />
           <col style={{ width: "10%" }} />
           <col style={{ width: "10%" }} />
           <col style={{ width: "1%" }} />

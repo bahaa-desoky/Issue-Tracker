@@ -4,6 +4,7 @@ const ticketSchema = mongoose.Schema({
   project: String,
   title: String,
   description: String,
+  name: String,
   author: String,
   priority: String,
   resolved: {

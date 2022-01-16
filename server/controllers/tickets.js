@@ -12,7 +12,11 @@ export const getTickets = async (request, response) => {
 
 export const createTicket = async (request, response) => {
   const ticket = request.body;
-  const newTicket = new TicketModel(ticket);
+  const newTicket = new TicketModel({
+    ...ticket,
+    author: request.userId,
+    createdAt: new Date().toISOString(),
+  });
   try {
     await newTicket.save();
     response.status(201).json(newTicket);
@@ -22,6 +26,7 @@ export const createTicket = async (request, response) => {
 };
 
 export const updateTicket = async (request, response) => {
+  const ticket = request.body;
   const { id } = request.params;
 
   if (!mongoose.Types.ObjectId.isValid(id))
@@ -29,7 +34,7 @@ export const updateTicket = async (request, response) => {
 
   const updatedTicket = await TicketModel.findByIdAndUpdate(
     id,
-    { ...request.body, id },
+    { ...ticket, id },
     {
       new: true,
     }
