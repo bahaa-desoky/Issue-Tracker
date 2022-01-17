@@ -14,7 +14,6 @@ const auth = async (request, response, next) => {
     // it isn't google auth
     if (token && isCustomAuth) {
       decodedData = jwt.verify(token, process.env.SECRET);
-      console.log(decodedData);
       request.userId = decodedData.id;
     } else {
       decodedData = jwt.decode(token);

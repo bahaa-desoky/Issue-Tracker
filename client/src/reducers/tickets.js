@@ -4,8 +4,6 @@ export default (tickets = [], action) => {
   switch (action.type) {
     case FETCH_ALL:
       const user = JSON.parse(localStorage.getItem("profile"));
-      console.log(user);
-      console.log(action.payload);
       return action.payload.filter((ticket) => {
         if (user.result._id && !user.result.googleId) {
           return ticket.author === user.result._id;

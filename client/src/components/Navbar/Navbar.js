@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { LOGOUT } from "../../constants/actionTypes";
+import decode from "jwt-decode";
 
 const NavBar = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
@@ -26,6 +27,10 @@ const NavBar = () => {
 
   useEffect(() => {
     const token = user ? user.token : null;
+    if (token) {
+      const decodedToken = decode(token);
+      if (decodedToken.exp * 1000 < Date.now()) logout(); // this checks if the expiry date (in milliseconds) has passed
+    }
     setUser(JSON.parse(localStorage.getItem("profile")));
   }, [location]); // user should be set as soon as auth is succesful, i.e. when we redirect back to home
 
