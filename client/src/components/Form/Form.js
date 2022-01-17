@@ -5,7 +5,8 @@ import {
   Typography,
   Paper,
   MenuItem,
-  Box,
+  Checkbox,
+  FormControlLabel,
   Grid,
   IconButton,
 } from "@mui/material";
@@ -16,12 +17,14 @@ import ClearIcon from "@mui/icons-material/Clear";
 
 const Form = ({ currentId, setCurrentId }) => {
   const user = JSON.parse(localStorage.getItem("profile"));
+  const [checked, setChecked] = useState(false);
   const [ticketData, setTicketData] = useState({
     name: user ? user.result.name : "",
     project: "",
     title: "",
     description: "",
     priority: "",
+    resolved: false,
   });
   const dispatch = useDispatch();
 
@@ -41,6 +44,7 @@ const Form = ({ currentId, setCurrentId }) => {
     e.preventDefault(); // this prevents browser refresh
     if (currentId) {
       dispatch(updateTicket(currentId, ticketData));
+      setTicketData({ ...ticketData, resolved: false });
     } else {
       dispatch(createTicket(ticketData));
     }
@@ -112,21 +116,43 @@ const Form = ({ currentId, setCurrentId }) => {
             />
           </Grid>
           <Grid item xs={12} sm={12}>
-            <TextField
-              sx={{ width: "40%" }}
-              required
-              className="priority-select"
-              value={ticketData.priority}
-              onChange={(e) =>
-                setTicketData({ ...ticketData, priority: e.target.value })
-              }
-              select // tell TextField to render select
-              label="Priority"
-            >
-              <MenuItem value={1}>High</MenuItem>
-              <MenuItem value={2}>Medium</MenuItem>
-              <MenuItem value={3}>Low</MenuItem>
-            </TextField>
+            <Grid container alignContent="center" direction="row" spacing={1}>
+              <Grid item sx={{ width: "100%" }}>
+                <TextField
+                  sx={{ width: "50%" }}
+                  required
+                  value={ticketData.priority}
+                  onChange={(e) =>
+                    setTicketData({ ...ticketData, priority: e.target.value })
+                  }
+                  select // tell TextField to render select
+                  label="Priority"
+                >
+                  <MenuItem value={1}>High</MenuItem>
+                  <MenuItem value={2}>Medium</MenuItem>
+                  <MenuItem value={3}>Low</MenuItem>
+                </TextField>
+              </Grid>
+              {currentId && (
+                <Grid item>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={checked}
+                        onChange={() => {
+                          setChecked(!checked);
+                          setTicketData({
+                            ...ticketData,
+                            resolved: !ticketData.resolved,
+                          });
+                        }}
+                      />
+                    }
+                    label="Mark Resolved?"
+                  />
+                </Grid>
+              )}
+            </Grid>
           </Grid>
           <Grid item xs={12} sm={12}>
             <Grid container spacing={1}>

@@ -14,6 +14,7 @@ import {
   TableSortLabel,
   Typography,
   IconButton,
+  Grid,
 } from "@mui/material";
 import CircleSharpIcon from "@mui/icons-material/CircleSharp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -38,8 +39,18 @@ const createRow = (
 const getTableData = (data) => {
   var rows = [];
   data.forEach((element) => {
+    var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    var intlObj = new Intl.DateTimeFormat("en-US", {
+      year: "2-digit",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "numeric",
+      minute: "numeric",
+      timeZone: timezone,
+    });
+
     var date = new Date(element.createdAt);
-    date = date.toISOString().split("T")[0];
+    date = intlObj.format(date);
     rows.push(
       createRow(
         element._id,
@@ -82,29 +93,48 @@ function Row({ row, currentId, setCurrentId }) {
         <TableCell align="left">{row.title}</TableCell>
         <TableCell align="left">{row.name}</TableCell>
         <TableCell align="left">
-          <CircleSharpIcon
-            sx={{
-              marginRight: "0.5em",
-              fontSize: "0.7em",
-              color:
-                row.priority === "High"
-                  ? "red"
-                  : row.priority === "Medium"
-                  ? "#FFE200"
-                  : "#A7F432",
-            }}
-          ></CircleSharpIcon>
-          {row.priority}
+          <Grid container direction="row" alignItems="center">
+            <Grid
+              item
+              sx={{
+                display: { xs: "none", sm: "block" },
+              }}
+            >
+              <CircleSharpIcon
+                sx={{
+                  display: { xs: "none", sm: "flex" },
+                  marginRight: "0.5em",
+                  fontSize: "0.7em",
+                  color:
+                    row.priority === "High"
+                      ? "red"
+                      : row.priority === "Medium"
+                      ? "#FFE200"
+                      : "#A7F432",
+                }}
+              />
+            </Grid>
+            <Grid item>{row.priority}</Grid>
+          </Grid>
         </TableCell>
         <TableCell align="left">
-          <CircleSharpIcon
-            sx={{
-              marginRight: "0.5em",
-              fontSize: "0.7em",
-              color: row.status === "Resolved" ? "#03AC13" : "blue",
-            }}
-          ></CircleSharpIcon>
-          {row.status}
+          <Grid container direction="row" alignItems="center">
+            <Grid
+              item
+              sx={{
+                display: { xs: "none", sm: "block" },
+              }}
+            >
+              <CircleSharpIcon
+                sx={{
+                  marginRight: "0.5em",
+                  fontSize: "0.7em",
+                  color: row.status === "Resolved" ? "#03AC13" : "blue",
+                }}
+              />
+            </Grid>
+            <Grid item>{row.status}</Grid>
+          </Grid>
         </TableCell>
         <TableCell>
           {/* through props drilling, we set the current id of the ticket to be edited */}
