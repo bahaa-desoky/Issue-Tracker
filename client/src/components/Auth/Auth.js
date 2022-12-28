@@ -34,7 +34,7 @@ const Auth = () => {
 
     try {
       dispatch({ type: AUTH, data: { result, token } });
-      navigate("/");
+      navigate("/tickets");
     } catch (error) {
       console.log(error);
     }
@@ -149,7 +149,7 @@ const Auth = () => {
             <Grid item xs={12} sm={12}>
               <Box textAlign="center">
                 <GoogleLogin
-                  clientId="726694797277-86isk51bmng63ug9v2j2pk18a548a06m.apps.googleusercontent.com"
+                  clientId="726694797277-hqfefpdsg8ev5ngikhmc6q1agunej4r3.apps.googleusercontent.com"
                   onSuccess={googleSuccess}
                   onFailure={googleFailure}
                   cookiePolicy="single_host_origin"
