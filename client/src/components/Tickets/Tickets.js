@@ -69,7 +69,7 @@ const getTableData = (data) => {
   return rows;
 };
 
-function Row({ row, currentId, setCurrentId }) {
+function Row({ row, canEdit, currentId, setCurrentId }) {
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
 
@@ -96,20 +96,24 @@ function Row({ row, currentId, setCurrentId }) {
         <TableCell align="left">
           <Typography variant="h7">{row.status}</Typography>
         </TableCell>
-        <TableCell>
-          {/* through props drilling, we set the current id of the ticket to be edited */}
-          <IconButton onClick={() => setCurrentId(row._id)}>
-            <EditIcon
-              fontSize="small"
-              color={currentId === row._id ? "primary" : "red"}
-            />
-          </IconButton>
-        </TableCell>
-        <TableCell>
-          <IconButton onClick={() => dispatch(deleteTicket(row._id))}>
-            <DeleteIcon fontSize="small" />
-          </IconButton>
-        </TableCell>
+        {canEdit && (
+          <>
+            <TableCell>
+              {/* through props drilling, we set the current id of the ticket to be edited */}
+              <IconButton onClick={() => setCurrentId(row._id)}>
+                <EditIcon
+                  fontSize="small"
+                  color={currentId === row._id ? "primary" : "red"}
+                />
+              </IconButton>
+            </TableCell>
+            <TableCell>
+              <IconButton onClick={() => dispatch(deleteTicket(row._id))}>
+                <DeleteIcon fontSize="small" />
+              </IconButton>
+            </TableCell>
+          </>
+        )}
       </TableRow>
       {/* collapsible description  */}
       <TableRow>
@@ -134,7 +138,8 @@ function Row({ row, currentId, setCurrentId }) {
   );
 }
 
-const Tickets = ({ currentId, setCurrentId }) => {
+// canEdit is used so that the edit and delete buttons do not appear in the "All tickets" page
+const Tickets = ({ canEdit, currentId, setCurrentId }) => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
   const tickets = useSelector((state) => state.tickets); // from reducers
@@ -162,8 +167,12 @@ const Tickets = ({ currentId, setCurrentId }) => {
           <col style={{ width: "20%" }} />
           <col style={{ width: "10%" }} />
           <col style={{ width: "10%" }} />
-          <col style={{ width: "1%" }} />
-          <col style={{ width: "1%" }} />
+          {canEdit && (
+            <>
+              <col style={{ width: "1%" }} />
+              <col style={{ width: "1%" }} />
+            </>
+          )}
         </colgroup>
         <TableHead>
           <TableRow>
@@ -174,8 +183,12 @@ const Tickets = ({ currentId, setCurrentId }) => {
             <TableCell>Priority</TableCell>
             <TableCell>Status</TableCell>
             {/* since edit and delete columns only have an icon they can be narrow */}
-            <TableCell />
-            <TableCell />
+            {canEdit && (
+              <>
+                <TableCell />
+                <TableCell />
+              </>
+            )}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -185,6 +198,7 @@ const Tickets = ({ currentId, setCurrentId }) => {
               <Row
                 key={row._id}
                 row={row}
+                canEdit={canEdit}
                 currentId={currentId}
                 setCurrentId={setCurrentId}
               />

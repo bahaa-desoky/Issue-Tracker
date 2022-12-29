@@ -17,7 +17,7 @@ const ProjectsHome = () => {
   return (
     <Box sx={{ margin: "auto", width: "80vw" }}>
       <Typography variant="h4">All Projects</Typography>
-      <Grid width={"80vw"} container alignItems="stretch" spacing={3}>
+      <Grid container alignItems="stretch" spacing={3}>
         <Grid item xs={12} sm={8}>
           <Box
             sx={{
