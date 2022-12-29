@@ -1,6 +1,8 @@
 import axios from "axios";
 
-const API = axios.create({ baseURL: "http://localhost:5000" });
+const API = axios.create({
+  baseURL: "http://localhost:3000/",
+});
 
 // send token to middleware to verify login before performing CRUD operations
 API.interceptors.request.use((request) => {
@@ -12,12 +14,27 @@ API.interceptors.request.use((request) => {
   return request;
 });
 
+export const fetchProjects = () => {
+  return API.get("/projects");
+};
+
+export const createProject = (newProject) => {
+  return API.post("/projects", newProject);
+};
+
+export const updateProject = (id, updatedProject) => {
+  return API.patch(`/projects/${id}`, updatedProject);
+};
+
+export const deleteProject = (id) => {
+  return API.delete(`/projects/${id}`);
+};
+
 export const fetchTickets = () => {
   return API.get("/tickets");
 };
 
 export const createTicket = (newTicket) => {
-  console.log(newTicket);
   return API.post("/tickets", newTicket);
 };
 

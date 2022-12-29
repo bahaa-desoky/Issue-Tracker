@@ -15,7 +15,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { createTicket, updateTicket } from "../../actions/tickets.js";
 import ClearIcon from "@mui/icons-material/Clear";
 
-const Form = ({ currentId, setCurrentId }) => {
+const TicketForm = ({ currentId, setCurrentId }) => {
+  // this is just so that the author (current user) shows up in the table.
+  // not needed for now, but will be helpful once collaboration is implemented
   const user = JSON.parse(localStorage.getItem("profile"));
   const [checked, setChecked] = useState(false);
   const [ticketData, setTicketData] = useState({
@@ -65,7 +67,7 @@ const Form = ({ currentId, setCurrentId }) => {
       <form
         autoComplete="off"
         onSubmit={handleSubmit}
-        style={{ display: "grid", padding: "2%" }}
+        style={{ display: "grid", padding: "1vh" }}
       >
         <Grid container spacing={1}>
           <Grid item xs={12} sm={12}>
@@ -178,4 +180,4 @@ const Form = ({ currentId, setCurrentId }) => {
   );
 };
 
-export default Form;
+export default TicketForm;

@@ -17,8 +17,8 @@ import MenuIcon from "@mui/icons-material/Menu";
 import LogoutIcon from "@mui/icons-material/Logout";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import { DRAWERWIDTH } from "../../constants/styleConstants";
-import { Avatar, Button } from "@mui/material";
+import { COLORHASH, DRAWERWIDTH } from "../../constants/styleConstants";
+import { Avatar } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -32,10 +32,7 @@ const Sidebar = (props) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-
-  useEffect(() => {
-    console.log("refresh");
-  }, []);
+  const [selected, setSelected] = useState(location.pathname.slice(1)); // to highlight selected drawer item
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -54,7 +51,7 @@ const Sidebar = (props) => {
       if (decodedToken.exp * 1000 < Date.now()) logout(); // this checks if the expiry date (in milliseconds) has passed
     }
     setUser(JSON.parse(localStorage.getItem("profile")));
-  }, [location]); // user should be set as soon as auth is succesful, i.e. when we redirect back to hom
+  }, [location]); // user should be set as soon as auth is succesful, i.e. when we redirect back to home
 
   const userProfile = user ? (
     <List>
@@ -63,10 +60,9 @@ const Sidebar = (props) => {
           <Avatar
             sx={{
               // random color avatar each time
-              bgcolor: `rgb(${Math.floor(Math.random() * 255)}
-              , ${Math.floor(Math.random() * 255)}, ${Math.floor(
-                Math.random() * 255
-              )})`,
+              bgcolor: `rgb(${COLORHASH(
+                user.result._id.toString()
+              ).toString()})`,
             }}
             src={user.result.imageUrl}
           >
@@ -93,12 +89,14 @@ const Sidebar = (props) => {
       <Divider />
       <List>
         {["Projects", "Tickets", "Settings"].map((text, index) => (
-          <ListItem
-            key={index}
-            onClick={() => console.log(`${text}`)} // temporary onClick
-            disablePadding
-          >
-            <ListItemButton onClick={() => navigate(`/${text.toLowerCase()}`)}>
+          <ListItem key={index} disablePadding>
+            <ListItemButton
+              selected={selected === text.toLowerCase()}
+              onClick={() => {
+                navigate(`/${text.toLowerCase()}`);
+                setSelected(text.toLowerCase());
+              }}
+            >
               <ListItemIcon>
                 {index === 0 ? (
                   <AccountTreeIcon />
@@ -113,7 +111,6 @@ const Sidebar = (props) => {
           </ListItem>
         ))}
       </List>
-      <Divider />
       <Box
         sx={{
           position: "absolute",

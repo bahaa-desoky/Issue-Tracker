@@ -7,10 +7,11 @@ import {
   Navigate,
   Outlet,
 } from "react-router-dom";
-import Home from "./components/Home/Home";
+import TicketsHome from "./components/TicketsHome/TicketsHome";
 import Auth from "./components/Auth/Auth";
 import Sidebar from "./components/Sidebar/Sidebar";
 import { Box } from "@mui/material";
+import ProjectsHome from "./components/ProjectsHome/ProjectsHome";
 
 const PrivateRoute = () => {
   const user = JSON.parse(localStorage.getItem("profile"));
@@ -24,7 +25,8 @@ const App = () => {
         <Sidebar />
         <Routes>
           <Route path="/" element={<PrivateRoute />}>
-            <Route path="/tickets" element={<Home />} />
+            <Route path="/tickets" element={<TicketsHome />} />
+            <Route path="/projects" element={<ProjectsHome />} />
           </Route>
           <Route path="/auth" element={<Auth />} />
         </Routes>

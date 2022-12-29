@@ -34,7 +34,7 @@ const Auth = () => {
 
     try {
       dispatch({ type: AUTH, data: { result, token } });
-      navigate("/tickets");
+      navigate("/projects");
     } catch (error) {
       console.log(error);
     }

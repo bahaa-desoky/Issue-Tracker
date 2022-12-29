@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   Box,
@@ -14,9 +14,7 @@ import {
   TableSortLabel,
   Typography,
   IconButton,
-  Grid,
 } from "@mui/material";
-import CircleSharpIcon from "@mui/icons-material/CircleSharp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import EditIcon from "@mui/icons-material/Edit";
@@ -93,48 +91,10 @@ function Row({ row, currentId, setCurrentId }) {
         <TableCell align="left">{row.title}</TableCell>
         <TableCell align="left">{row.name}</TableCell>
         <TableCell align="left">
-          <Grid container direction="row" alignItems="center">
-            <Grid
-              item
-              sx={{
-                display: { xs: "none", sm: "block" },
-              }}
-            >
-              <CircleSharpIcon
-                sx={{
-                  display: { xs: "none", sm: "flex" },
-                  marginRight: "0.5em",
-                  fontSize: "0.7em",
-                  color:
-                    row.priority === "High"
-                      ? "red"
-                      : row.priority === "Medium"
-                      ? "#FFE200"
-                      : "#A7F432",
-                }}
-              />
-            </Grid>
-            <Grid item>{row.priority}</Grid>
-          </Grid>
+          <Typography variant="h7">{row.priority}</Typography>
         </TableCell>
         <TableCell align="left">
-          <Grid container direction="row" alignItems="center">
-            <Grid
-              item
-              sx={{
-                display: { xs: "none", sm: "block" },
-              }}
-            >
-              <CircleSharpIcon
-                sx={{
-                  marginRight: "0.5em",
-                  fontSize: "0.7em",
-                  color: row.status === "Resolved" ? "#03AC13" : "blue",
-                }}
-              />
-            </Grid>
-            <Grid item>{row.status}</Grid>
-          </Grid>
+          <Typography variant="h7">{row.status}</Typography>
         </TableCell>
         <TableCell>
           {/* through props drilling, we set the current id of the ticket to be edited */}
@@ -190,7 +150,7 @@ const Tickets = ({ currentId, setCurrentId }) => {
 
   return !tickets.length ? (
     <Typography variant="h5">
-      No tickets yet. Please add a ticket to get started.
+      No tickets yet, create a project to get started.
     </Typography>
   ) : (
     <TableContainer component={Paper}>
