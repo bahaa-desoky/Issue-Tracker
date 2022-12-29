@@ -2,7 +2,6 @@
 // only if they are allowed, by caling next() after our checks
 
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
 
 const auth = async (request, response, next) => {
   try {
