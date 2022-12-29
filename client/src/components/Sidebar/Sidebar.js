@@ -95,6 +95,7 @@ const Sidebar = (props) => {
               onClick={() => {
                 navigate(`/${text.toLowerCase()}`);
                 setSelected(text.toLowerCase());
+                setMobileOpen(false); // make sure that the drawer disappears after navigating on mobile
               }}
             >
               <ListItemIcon>
@@ -120,7 +121,12 @@ const Sidebar = (props) => {
       >
         <List>
           <ListItem disablePadding>
-            <ListItemButton onClick={logout}>
+            <ListItemButton
+              onClick={() => {
+                logout();
+                setMobileOpen(false); // make sure that the drawer disappears after logging out on mobile
+              }}
+            >
               <ListItemIcon>
                 <LogoutIcon />
               </ListItemIcon>

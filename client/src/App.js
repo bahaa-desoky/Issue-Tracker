@@ -12,6 +12,7 @@ import Auth from "./components/Auth/Auth";
 import Sidebar from "./components/Sidebar/Sidebar";
 import { Box } from "@mui/material";
 import ProjectsHome from "./components/ProjectsHome/ProjectsHome";
+import SettingsHome from "./components/SettingsHome/SettingsHome";
 
 const PrivateRoute = () => {
   const user = JSON.parse(localStorage.getItem("profile"));
@@ -20,13 +21,16 @@ const PrivateRoute = () => {
 
 const App = () => {
   return (
-    <Box sx={{ display: "flex" }}>
+    // this makes it so that the hamburger menu for the drawer on mobile appears above the page content
+    // that way the page content is centered
+    <Box sx={{ display: { sm: "flex", xs: " " } }}>
       <BrowserRouter>
         <Sidebar />
         <Routes>
           <Route path="/" element={<PrivateRoute />}>
             <Route path="/tickets" element={<TicketsHome />} />
             <Route path="/projects" element={<ProjectsHome />} />
+            <Route path="/settings" element={<SettingsHome />} />
           </Route>
           <Route path="/auth" element={<Auth />} />
         </Routes>
