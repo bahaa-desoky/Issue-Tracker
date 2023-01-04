@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const ticketSchema = mongoose.Schema({
-  project: String,
+  projectId: String,
   title: String,
   description: String,
   name: String,
