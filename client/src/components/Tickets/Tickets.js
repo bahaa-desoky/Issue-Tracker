@@ -19,7 +19,12 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { deleteTicket } from "../../actions/tickets.js";
+import {
+  useGetTicketsQuery,
+  useDeleteTicketMutation,
+} from "../../features/tickets/ticketsApiSlice";
+import { setTicketsState } from "../../features/tickets/ticketsSlice";
+import { useGetProjectsQuery } from "../../features/projects/projectsApiSlice";
 
 const createRow = (
   _id,
@@ -34,7 +39,7 @@ const createRow = (
   return { _id, date, title, description, name, priority, status, comments };
 };
 
-const getTableData = (data) => {
+const getTableData = (data, projectData, canEdit) => {
   var rows = [];
   data.forEach((element) => {
     var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -53,7 +58,12 @@ const getTableData = (data) => {
       createRow(
         element._id,
         date,
-        element.project + ": " + element.title,
+        canEdit
+          ? element.title
+          : projectData.find((project) => project._id === element?.projectId)
+              ?.title +
+              ": " +
+              element.title,
         element.description,
         element.name,
         element.priority === "1"
@@ -70,8 +80,8 @@ const getTableData = (data) => {
 };
 
 function Row({ row, canEdit, currentId, setCurrentId }) {
-  const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
+  const [deleteTicket] = useDeleteTicketMutation();
 
   return (
     <>
@@ -108,7 +118,7 @@ function Row({ row, canEdit, currentId, setCurrentId }) {
               </IconButton>
             </TableCell>
             <TableCell>
-              <IconButton onClick={() => dispatch(deleteTicket(row._id))}>
+              <IconButton onClick={async () => await deleteTicket(row._id)}>
                 <DeleteIcon fontSize="small" />
               </IconButton>
             </TableCell>
@@ -138,11 +148,39 @@ function Row({ row, canEdit, currentId, setCurrentId }) {
   );
 }
 
-// canEdit is used so that the edit and delete buttons do not appear in the "All tickets" page
-const Tickets = ({ canEdit, currentId, setCurrentId }) => {
+// canEdit is used so that the edit and delete buttons do not appear in the "All tickets" page.
+// However, projectId is only used when canEdit is used so perhaps canEdit can be remvoed in the future
+const Tickets = ({ projectId, canEdit, currentId, setCurrentId }) => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
-  const tickets = useSelector((state) => state.tickets); // from reducers
+  const {
+    data: fetchedTickets,
+    isLoading,
+    isSuccess,
+    isError,
+    error,
+  } = useGetTicketsQuery();
+  // We need projects fetched so we can read the project name to display it in the "All tickets" table.
+  // Adding/editing/removing tickets is not possible on the "All tickets" page so we only need to read the data
+  const { data: fetchedProjects } = useGetProjectsQuery();
+  const dispatch = useDispatch();
+  const tickets = useSelector((state) => {
+    if (projectId) {
+      // get the selected project's tickets
+      return state.tickets.tickets.filter(
+        (ticket) => ticket.projectId === projectId
+      );
+    } else {
+      return state.tickets.tickets;
+    }
+  });
+
+  // fetchedTickets gets all tickets, we then dispatch setTickets to filter based on the current user
+  useEffect(() => {
+    if (fetchedTickets) {
+      dispatch(setTicketsState(fetchedTickets));
+    }
+  }, [fetchedTickets]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -153,69 +191,83 @@ const Tickets = ({ canEdit, currentId, setCurrentId }) => {
     setPage(0);
   };
 
-  return !tickets.length ? (
-    <Typography variant="h5">
-      No tickets yet, create a project to get started.
-    </Typography>
-  ) : (
-    <TableContainer component={Paper}>
-      <Table aria-label="ticket-table">
-        <colgroup>
-          <col style={{ width: "1%" }} />
-          <col style={{ width: "10%" }} />
-          <col style={{ width: "50%" }} />
-          <col style={{ width: "20%" }} />
-          <col style={{ width: "10%" }} />
-          <col style={{ width: "10%" }} />
-          {canEdit && (
-            <>
-              <col style={{ width: "1%" }} />
-              <col style={{ width: "1%" }} />
-            </>
-          )}
-        </colgroup>
-        <TableHead>
-          <TableRow>
-            <TableCell />
-            <TableCell>Date</TableCell>
-            <TableCell>Project: Issue</TableCell>
-            <TableCell>Author</TableCell>
-            <TableCell>Priority</TableCell>
-            <TableCell>Status</TableCell>
-            {/* since edit and delete columns only have an icon they can be narrow */}
+  let content;
+  if (isLoading) {
+    // could use Skeleton loader in future
+    content = <></>;
+  } else if (isError) {
+    content = <Typography variant="h5">{error}</Typography>;
+  } else if (isSuccess) {
+    content = !fetchedProjects ? (
+      <></>
+    ) : !tickets.length ? (
+      <Typography variant="h5">
+        {canEdit
+          ? "No tickets yet, add one to get started."
+          : "No tickets yet, create a project to get started."}
+      </Typography>
+    ) : (
+      <TableContainer component={Paper}>
+        <Table aria-label="ticket-table">
+          <colgroup>
+            <col style={{ width: "1%" }} />
+            <col style={{ width: "10%" }} />
+            <col style={{ width: "50%" }} />
+            <col style={{ width: "20%" }} />
+            <col style={{ width: "10%" }} />
+            <col style={{ width: "10%" }} />
             {canEdit && (
               <>
-                <TableCell />
-                <TableCell />
+                <col style={{ width: "1%" }} />
+                <col style={{ width: "1%" }} />
               </>
             )}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {getTableData(tickets)
-            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            .map((row) => (
-              <Row
-                key={row._id}
-                row={row}
-                canEdit={canEdit}
-                currentId={currentId}
-                setCurrentId={setCurrentId}
-              />
-            ))}
-        </TableBody>
-      </Table>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={tickets.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-    </TableContainer>
-  );
+          </colgroup>
+          <TableHead>
+            <TableRow>
+              <TableCell />
+              <TableCell>Date</TableCell>
+              <TableCell>{canEdit ? "Issue" : "Project: Issue"}</TableCell>
+              <TableCell>Author</TableCell>
+              <TableCell>Priority</TableCell>
+              <TableCell>Status</TableCell>
+              {/* since edit and delete columns only have an icon they can be narrow */}
+              {canEdit && (
+                <>
+                  <TableCell />
+                  <TableCell />
+                </>
+              )}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {getTableData(tickets, fetchedProjects, canEdit)
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((row) => (
+                <Row
+                  key={row._id}
+                  row={row}
+                  canEdit={canEdit}
+                  currentId={currentId}
+                  setCurrentId={setCurrentId}
+                />
+              ))}
+          </TableBody>
+        </Table>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={tickets.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </TableContainer>
+    );
+  }
+
+  return content;
 };
 
 export default Tickets;

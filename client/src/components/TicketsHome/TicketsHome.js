@@ -1,17 +1,10 @@
 import React from "react";
-import { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useState } from "react";
 import { Box, Typography } from "@mui/material";
-import { getTickets } from "../../actions/tickets.js";
 import Tickets from "../Tickets/Tickets.js";
 
 const TicketsHome = () => {
   const [currentId, setCurrentId] = useState(null);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(getTickets());
-  }, [dispatch]);
 
   return (
     <Box sx={{ margin: "auto", width: "80vw" }}>
