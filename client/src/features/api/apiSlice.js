@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 // Basic authorization. Include credentials with each request or with cookies
 const baseQuery = fetchBaseQuery({
-  baseUrl: "https://issue-tracker-anrs.onrender.com/",
+  baseUrl: "http://localhost:5000/",
   credentials: "include",
   prepareHeaders: (headers) => {
     const token = JSON.parse(localStorage.getItem("profile"))?.token;
