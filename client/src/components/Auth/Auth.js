@@ -9,15 +9,18 @@ import {
   Container,
   TextField,
 } from "@mui/material";
-import { GoogleLogin } from "react-google-login";
-import GoogleIcon from "./google";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { AUTH } from "../../constants/actionTypes";
-import { signUp, signIn } from "../../actions/auth.js";
+import { setCredentials } from "../../features/auth/authSlice";
+import {
+  useLoginMutation,
+  useSignUpMutation,
+} from "../../features/auth/authApiSlice";
 
 const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [formData, setformData] = useState({
     firstName: "",
     lastName: "",
@@ -27,31 +30,16 @@ const Auth = () => {
   });
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [login] = useLoginMutation();
+  const [signUp] = useSignUpMutation();
 
-  const googleSuccess = async (response) => {
-    const result = response.profileObj;
-    const token = response.tokenId;
-
-    try {
-      dispatch({ type: AUTH, data: { result, token } });
-      navigate("/projects");
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const googleFailure = (error) => {
-    console.log(error);
-  };
-
-  // used for JWT auth (sign up/in)
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isSignUp) {
-      dispatch(signUp(formData, navigate));
-    } else {
-      dispatch(signIn(formData, navigate));
-    }
+    const userData = isSignUp
+      ? await signUp(formData).unwrap()
+      : await login(formData).unwrap();
+    dispatch(setCredentials({ ...userData }));
+    navigate("/projects");
   };
 
   return (
@@ -99,8 +87,9 @@ const Auth = () => {
                 fullWidth
                 name="email"
                 label="Email"
-                value={formData.email}
+                value={email}
                 onChange={(e) => {
+                  setEmail(e.target.value);
                   setformData({ ...formData, email: e.target.value });
                 }}
               />
@@ -112,8 +101,9 @@ const Auth = () => {
                 name="password"
                 label="Password"
                 type="password"
-                value={formData.password}
+                value={password}
                 onChange={(e) => {
+                  setPassword(e.target.value);
                   setformData({ ...formData, password: e.target.value });
                 }}
               />
@@ -144,28 +134,6 @@ const Auth = () => {
                 >
                   {isSignUp ? "Sign up" : "Login"}
                 </Button>
-              </Box>
-            </Grid>
-            <Grid item xs={12} sm={12}>
-              <Box textAlign="center">
-                <GoogleLogin
-                  clientId="726694797277-hqfefpdsg8ev5ngikhmc6q1agunej4r3.apps.googleusercontent.com"
-                  onSuccess={googleSuccess}
-                  onFailure={googleFailure}
-                  cookiePolicy="single_host_origin"
-                  render={(renderProps) => (
-                    <Button
-                      variant="contained"
-                      color="secondary"
-                      fullWidth
-                      onClick={renderProps.onClick}
-                      disabled={renderProps.disabled}
-                      startIcon={<GoogleIcon />}
-                    >
-                      Sign in with Google
-                    </Button>
-                  )}
-                />
               </Box>
             </Grid>
             <Grid item xs={12} sm={12}>
