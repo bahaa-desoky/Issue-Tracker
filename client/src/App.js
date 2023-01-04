@@ -33,6 +33,7 @@ const App = () => {
             <Route path="/projects" element={<ProjectsHome />} />
             <Route path="/projects/:id" element={<Project />} />
             <Route path="/settings" element={<SettingsHome />} />
+            <Route index element={<Navigate to="/projects" />} />
           </Route>
           <Route path="/auth" element={<Auth />} />
         </Routes>
