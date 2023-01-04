@@ -1,12 +1,6 @@
 import React from "react";
 import "./styles.css";
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Navigate,
-  Outlet,
-} from "react-router-dom";
+import { Routes, Route, Navigate, Outlet, HashRouter } from "react-router-dom";
 import TicketsHome from "./components/TicketsHome/TicketsHome";
 import Auth from "./components/Auth/Auth";
 import Sidebar from "./components/Sidebar/Sidebar";
@@ -25,7 +19,7 @@ const App = () => {
     // this makes it so that the hamburger menu for the drawer on mobile appears above the page content
     // that way the page content is centered
     <Box sx={{ display: { sm: "flex", xs: "" } }}>
-      <BrowserRouter>
+      <HashRouter>
         <Sidebar />
         <Routes>
           <Route path="/" element={<PrivateRoute />}>
@@ -33,11 +27,11 @@ const App = () => {
             <Route path="/projects" element={<ProjectsHome />} />
             <Route path="/projects/:id" element={<Project />} />
             <Route path="/settings" element={<SettingsHome />} />
-            {/* <Route index element={<Navigate to="/projects" />} /> */}
+            <Route index element={<Navigate to="/projects" />} />
           </Route>
           <Route path="/auth" element={<Auth />} />
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     </Box>
   );
 };
