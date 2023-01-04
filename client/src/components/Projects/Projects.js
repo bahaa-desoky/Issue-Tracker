@@ -1,5 +1,5 @@
-import { React, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { React, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Box,
   Collapse,
@@ -19,7 +19,12 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { deleteProject } from "../../actions/projects.js";
+import { useNavigate } from "react-router-dom";
+import {
+  useGetProjectsQuery,
+  useDeleteProjectMutation,
+} from "../../features/projects/projectsApiSlice";
+import { setProjects } from "../../features/projects/projectsSlice.js";
 
 const createRow = (_id, date, title, description, name) => {
   return { _id, date, title, description, name };
@@ -53,13 +58,23 @@ const getTableData = (data) => {
   return rows;
 };
 
-function Row({ row, currentId, setCurrentId }) {
-  const dispatch = useDispatch();
+const Row = ({ row, currentId, setCurrentId }) => {
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+  const [deleteProject] = useDeleteProjectMutation();
+
+  const handleProjectClick = (id) => {
+    navigate(`/projects/${id}`);
+  };
 
   return (
     <>
-      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
+      <TableRow
+        sx={{
+          "& > *": { borderBottom: "unset" },
+          "&:hover": { cursor: "pointer" },
+        }}
+      >
         <TableCell>
           <IconButton
             aria-label="expand row"
@@ -69,11 +84,19 @@ function Row({ row, currentId, setCurrentId }) {
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell component="th" scope="row">
+        <TableCell
+          onClick={() => handleProjectClick(row._id)}
+          component="th"
+          scope="row"
+        >
           {row.date}
         </TableCell>
-        <TableCell align="left">{row.title}</TableCell>
-        <TableCell align="left">{row.name}</TableCell>
+        <TableCell onClick={() => handleProjectClick(row._id)} align="left">
+          {row.title}
+        </TableCell>
+        <TableCell onClick={() => handleProjectClick(row._id)} align="left">
+          {row.name}
+        </TableCell>
         <TableCell>
           {/* through props drilling, we set the current id of the project to be edited */}
           <IconButton onClick={() => setCurrentId(row._id)}>
@@ -84,7 +107,7 @@ function Row({ row, currentId, setCurrentId }) {
           </IconButton>
         </TableCell>
         <TableCell>
-          <IconButton onClick={() => dispatch(deleteProject(row._id))}>
+          <IconButton onClick={async () => await deleteProject(row._id)}>
             <DeleteIcon fontSize="small" />
           </IconButton>
         </TableCell>
@@ -110,12 +133,27 @@ function Row({ row, currentId, setCurrentId }) {
       </TableRow>
     </>
   );
-}
+};
 
 const Projects = ({ currentId, setCurrentId }) => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
-  const projects = useSelector((state) => state.projects); // from reducers
+  const {
+    data: fetchedProjects,
+    isLoading,
+    isSuccess,
+    isError,
+    error,
+  } = useGetProjectsQuery();
+  const dispatch = useDispatch();
+  const projects = useSelector((state) => state.projects.projects);
+
+  // fetchedProjects gets all projects, we then dispatch setProjects to filter based on the current user
+  useEffect(() => {
+    if (fetchedProjects) {
+      dispatch(setProjects(fetchedProjects));
+    }
+  }, [fetchedProjects]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -126,12 +164,18 @@ const Projects = ({ currentId, setCurrentId }) => {
     setPage(0);
   };
 
-  return !projects.length ? (
-    <Typography variant="h5">
-      No projects yet, add one to get started.
-    </Typography>
-  ) : (
-    <div>
+  let content;
+  if (isLoading) {
+    // could use Skeleton loader in future
+    content = <></>;
+  } else if (isError) {
+    content = <Typography variant="h5">{error}</Typography>;
+  } else if (isSuccess) {
+    content = !projects.length ? (
+      <Typography variant="h5">
+        No projects yet, add one to get started.
+      </Typography>
+    ) : (
       <TableContainer component={Paper}>
         <Table aria-label="project-table">
           <colgroup>
@@ -176,8 +220,10 @@ const Projects = ({ currentId, setCurrentId }) => {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </TableContainer>
-    </div>
-  );
+    );
+  }
+
+  return content;
 };
 
 export default Projects;

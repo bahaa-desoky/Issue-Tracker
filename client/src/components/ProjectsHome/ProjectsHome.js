@@ -1,18 +1,11 @@
 import React from "react";
-import { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { Grid, Box, Paper, Typography } from "@mui/material";
-import { getProjects } from "../../actions/projects.js";
+import { useState } from "react";
+import { Grid, Box, Typography } from "@mui/material";
 import Projects from "../Projects/Projects.js";
 import ProjectForm from "../Forms/ProjectForm.js";
 
 const ProjectsHome = () => {
   const [currentId, setCurrentId] = useState(null);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(getProjects());
-  }, [dispatch]);
 
   return (
     <Box sx={{ margin: "auto", width: "80vw" }}>
