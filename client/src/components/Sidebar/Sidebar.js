@@ -22,8 +22,8 @@ import { Avatar } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
-import { LOGOUT } from "../../constants/actionTypes";
 import decode from "jwt-decode";
+import { logout } from "../../features/auth/authSlice";
 
 const Sidebar = (props) => {
   const { window } = props;
@@ -38,8 +38,8 @@ const Sidebar = (props) => {
     setMobileOpen(!mobileOpen);
   };
 
-  const logout = () => {
-    dispatch({ type: LOGOUT });
+  const logOut = () => {
+    dispatch(logout());
     setUser(null);
     navigate("/auth");
   };
@@ -48,7 +48,7 @@ const Sidebar = (props) => {
     const token = user ? user.token : null;
     if (token) {
       const decodedToken = decode(token);
-      if (decodedToken.exp * 1000 < Date.now()) logout(); // this checks if the expiry date (in milliseconds) has passed
+      if (decodedToken.exp * 1000 < Date.now()) logOut(); // this checks if the expiry date (in milliseconds) has passed
     }
     setUser(JSON.parse(localStorage.getItem("profile")));
   }, [location]); // user should be set as soon as auth is succesful, i.e. when we redirect back to home
@@ -123,7 +123,7 @@ const Sidebar = (props) => {
           <ListItem disablePadding>
             <ListItemButton
               onClick={() => {
-                logout();
+                logOut();
                 setMobileOpen(false); // make sure that the drawer disappears after logging out on mobile
               }}
             >
@@ -154,7 +154,6 @@ const Sidebar = (props) => {
           aria-label="open drawer"
           edge="start"
           onClick={handleDrawerToggle}
-          sx={{ mr: 2, display: { sm: "none" } }}
         >
           <MenuIcon />
         </IconButton>
