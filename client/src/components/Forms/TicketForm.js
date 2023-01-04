@@ -11,28 +11,33 @@ import {
   IconButton,
 } from "@mui/material";
 import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { createTicket, updateTicket } from "../../actions/tickets.js";
+import { useSelector } from "react-redux";
+import {
+  useAddTicketMutation,
+  useUpdateTicketMutation,
+} from "../../features/tickets/ticketsApiSlice";
 import ClearIcon from "@mui/icons-material/Clear";
 
-const TicketForm = ({ currentId, setCurrentId }) => {
+// projectId and projectName are needed for the ticket model, but they are fixed for each ticket
+const TicketForm = ({ projectId, projectName, currentId, setCurrentId }) => {
   // this is just so that the author (current user) shows up in the table.
   // not needed for now, but will be helpful once collaboration is implemented
   const user = JSON.parse(localStorage.getItem("profile"));
   const [checked, setChecked] = useState(false);
   const [ticketData, setTicketData] = useState({
     name: user ? user.result.name : "",
-    project: "",
+    projectId: projectId,
+    project: projectName,
     title: "",
     description: "",
     priority: "",
     resolved: false,
   });
-  const dispatch = useDispatch();
-
+  const [addTicket] = useAddTicketMutation();
+  const [updateTicket] = useUpdateTicketMutation();
   const ticket = useSelector((state) => {
     return currentId
-      ? state.tickets.find((ticket) => ticket._id == currentId)
+      ? state.tickets.tickets.find((ticket) => ticket._id == currentId)
       : null;
   });
 
@@ -42,19 +47,21 @@ const TicketForm = ({ currentId, setCurrentId }) => {
     if (ticket) setTicketData(ticket);
   }, [ticket]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault(); // this prevents browser refresh
     if (currentId) {
-      dispatch(updateTicket(currentId, ticketData));
-      setTicketData({ ...ticketData, resolved: false });
+      await updateTicket(ticketData);
+      setTicketData(ticketData);
     } else {
-      dispatch(createTicket(ticketData));
+      await addTicket(ticketData);
+      clear();
     }
   };
 
   const clear = () => {
     setCurrentId(null);
     setTicketData({
+      ...ticketData,
       project: "",
       title: "",
       description: "",
@@ -78,19 +85,6 @@ const TicketForm = ({ currentId, setCurrentId }) => {
           <Grid item xs={12} sm={12}>
             <TextField
               required
-              name="project"
-              variant="outlined"
-              label="Project name"
-              fullWidth
-              value={ticketData.project}
-              onChange={(e) =>
-                setTicketData({ ...ticketData, project: e.target.value })
-              } // ...ticketData lets the other fields persist
-            />
-          </Grid>
-          <Grid item xs={12} sm={12}>
-            <TextField
-              required
               name="title"
               variant="outlined"
               label="Title"
@@ -98,7 +92,7 @@ const TicketForm = ({ currentId, setCurrentId }) => {
               value={ticketData.title}
               onChange={(e) =>
                 setTicketData({ ...ticketData, title: e.target.value })
-              }
+              } // ...ticketData lets the other fields persist
             />
           </Grid>
           <Grid item xs={12} sm={12}>

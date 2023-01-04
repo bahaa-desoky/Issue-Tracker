@@ -8,8 +8,11 @@ import {
   IconButton,
 } from "@mui/material";
 import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { createProject, updateProject } from "../../actions/projects.js";
+import { useSelector } from "react-redux";
+import {
+  useAddProjectMutation,
+  useUpdateProjectMutation,
+} from "../../features/projects/projectsApiSlice.js";
 import ClearIcon from "@mui/icons-material/Clear";
 
 const ProjectForm = ({ currentId, setCurrentId }) => {
@@ -21,11 +24,11 @@ const ProjectForm = ({ currentId, setCurrentId }) => {
     title: "",
     description: "",
   });
-  const dispatch = useDispatch();
-
+  const [addProject] = useAddProjectMutation();
+  const [updateProject] = useUpdateProjectMutation();
   const project = useSelector((state) => {
     return currentId
-      ? state.projects.find((project) => project._id == currentId)
+      ? state.projects.projects.find((project) => project._id == currentId)
       : null;
   });
 
@@ -35,19 +38,21 @@ const ProjectForm = ({ currentId, setCurrentId }) => {
     if (project) setProjectData(project);
   }, [project]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault(); // this prevents browser refresh
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     if (currentId) {
-      dispatch(updateProject(currentId, projectData));
+      await updateProject(projectData);
       setProjectData(projectData);
     } else {
-      dispatch(createProject(projectData));
+      await addProject(projectData);
+      clear();
     }
   };
 
   const clear = () => {
     setCurrentId(null);
     setProjectData({
+      ...projectData,
       title: "",
       description: "",
     });
