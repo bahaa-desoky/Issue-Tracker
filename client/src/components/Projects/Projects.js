@@ -14,6 +14,7 @@ import {
   TableSortLabel,
   Typography,
   IconButton,
+  Skeleton,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -167,7 +168,7 @@ const Projects = ({ currentId, setCurrentId }) => {
   let content;
   if (isLoading) {
     // could use Skeleton loader in future
-    content = <></>;
+    content = <Skeleton variant="rectangular" width={"100%"} height={"30vh"} />;
   } else if (isError) {
     content = <Typography variant="h5">{error}</Typography>;
   } else if (isSuccess) {
