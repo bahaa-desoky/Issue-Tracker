@@ -5,7 +5,7 @@ Issue Tracker is a light web application that lets users create projects and add
 
 It is a full stack application built using the MERN stack (MongoDB, Express, Node.js and React). The following is a breakdown of the specific tools used and why they were chosen:
 - __React__
-  - React is fast and easy to use. It is also industry standard and has an active community, so there are many great tutorials and libraries.  
+	- React is fast and easy to use. It is also industry standard and has an active community, so there are many great tutorials and libraries.  
 	- Redux Toolkit (RTK) Query is used for state management as well as for CRUD operations on the API. 
 	- I decided to use RTK Query over something like axios and base redux so that I could familiarize myself with a more modern library and redux features (slices, stores, etc.), minimize boilerplate code, and use some of the advanced features of RTK Query (caching, multiple "dispatches")
  - __Node.js and Express.js__
