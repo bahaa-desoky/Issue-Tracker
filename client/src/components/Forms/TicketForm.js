@@ -1,7 +1,6 @@
 import React from "react";
 import {
   TextField,
-  Button,
   Typography,
   Paper,
   MenuItem,
@@ -10,6 +9,7 @@ import {
   Grid,
   IconButton,
 } from "@mui/material";
+import LoadingButton from "@mui/lab/LoadingButton";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import {
@@ -33,8 +33,9 @@ const TicketForm = ({ projectId, projectName, currentId, setCurrentId }) => {
     priority: "",
     resolved: false,
   });
-  const [addTicket] = useAddTicketMutation();
-  const [updateTicket] = useUpdateTicketMutation();
+  const [addTicket, { isLoading: addLoading }] = useAddTicketMutation();
+  const [updateTicket, { isLoading: updateLoading }] =
+    useUpdateTicketMutation();
   const ticket = useSelector((state) => {
     return currentId
       ? state.tickets.tickets.find((ticket) => ticket._id == currentId)
@@ -153,13 +154,14 @@ const TicketForm = ({ projectId, projectName, currentId, setCurrentId }) => {
           <Grid item xs={12} sm={12}>
             <Grid container spacing={1}>
               <Grid item>
-                <Button
+                <LoadingButton
+                  loading={currentId ? updateLoading : addLoading}
                   variant="contained"
                   type="submit"
                   className="submit-btn"
                 >
                   {currentId ? "Update" : "Create"}
-                </Button>
+                </LoadingButton>
               </Grid>
               <Grid item>
                 <IconButton onClick={() => clear()}>

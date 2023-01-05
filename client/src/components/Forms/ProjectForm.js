@@ -1,12 +1,6 @@
 import React from "react";
-import {
-  TextField,
-  Button,
-  Typography,
-  Paper,
-  Grid,
-  IconButton,
-} from "@mui/material";
+import { TextField, Typography, Paper, Grid, IconButton } from "@mui/material";
+import LoadingButton from "@mui/lab/LoadingButton";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import {
@@ -24,8 +18,9 @@ const ProjectForm = ({ currentId, setCurrentId }) => {
     title: "",
     description: "",
   });
-  const [addProject] = useAddProjectMutation();
-  const [updateProject] = useUpdateProjectMutation();
+  const [addProject, { isLoading: addLoading }] = useAddProjectMutation();
+  const [updateProject, { isLoading: updateLoading }] =
+    useUpdateProjectMutation();
   const project = useSelector((state) => {
     return currentId
       ? state.projects.projects.find((project) => project._id == currentId)
@@ -103,13 +98,14 @@ const ProjectForm = ({ currentId, setCurrentId }) => {
           <Grid item xs={12} sm={12}>
             <Grid container spacing={1}>
               <Grid item>
-                <Button
+                <LoadingButton
+                  loading={currentId ? updateLoading : addLoading}
                   variant="contained"
                   type="submit"
                   className="submit-btn"
                 >
                   {currentId ? "Update" : "Create"}
-                </Button>
+                </LoadingButton>
               </Grid>
               <Grid item>
                 <IconButton onClick={() => clear()}>

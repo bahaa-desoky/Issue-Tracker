@@ -9,6 +9,7 @@ import {
   Container,
   TextField,
 } from "@mui/material";
+import LoadingButton from "@mui/lab/LoadingButton";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setCredentials } from "../../features/auth/authSlice";
@@ -30,7 +31,7 @@ const Auth = () => {
   });
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [login] = useLoginMutation();
+  const [login, { isLoading }] = useLoginMutation();
   const [signUp] = useSignUpMutation();
 
   const handleSubmit = async (e) => {
@@ -126,14 +127,15 @@ const Auth = () => {
 
             <Grid item xs={12} sm={12}>
               <Box textAlign="center">
-                <Button
+                <LoadingButton
+                  loading={isLoading}
                   fullWidth
                   variant="contained"
                   type="submit"
                   className="submit-btn"
                 >
                   {isSignUp ? "Sign up" : "Login"}
-                </Button>
+                </LoadingButton>
               </Box>
             </Grid>
             <Grid item xs={12} sm={12}>
