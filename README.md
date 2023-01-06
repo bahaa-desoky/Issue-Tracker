@@ -1,5 +1,5 @@
 
-# [Issue tracker](https://issue-tracker-app-54p7.onrender.com/)
+# [Issue tracker](https://issue-tracker-app.com/)
 
 Issue Tracker is a light web application that lets users create projects and add issue tickets for each project so that they can keep up-to-date and organized when working.
 
@@ -19,7 +19,7 @@ It is a full stack application built using the MERN stack (MongoDB, Express, Nod
 
 Issue Tracker is currently a work in progress, and new features are continuously being worked on.
 
-The site is deployed [here](https://issue-tracker-app-54p7.onrender.com/).
+The site is deployed [here](https://issue-tracker-app.com/) (https://issue-tracker-app.com/).
 
 ### Current features:
 - Create/update/delete new projects
