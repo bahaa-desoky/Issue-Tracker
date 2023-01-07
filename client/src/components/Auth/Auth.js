@@ -31,16 +31,21 @@ const Auth = () => {
   });
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [login, { isLoading }] = useLoginMutation();
-  const [signUp] = useSignUpMutation();
+  const [login, { isLoading: loginLoading }] = useLoginMutation();
+  const [signUp, { isLoading: signupLoading }] = useSignUpMutation();
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const userData = isSignUp
-      ? await signUp(formData).unwrap()
-      : await login(formData).unwrap();
-    dispatch(setCredentials({ ...userData }));
-    navigate("/projects");
+    try {
+      const userData = isSignUp
+        ? await signUp(formData).unwrap()
+        : await login(formData).unwrap();
+      dispatch(setCredentials({ ...userData }));
+      navigate("/projects");
+    } catch (e) {
+      setError(e.data.message);
+    }
   };
 
   return (
@@ -51,6 +56,11 @@ const Auth = () => {
             <Grid item xs={12} sm={12}>
               <Typography align="center" variant="h5">
                 {isSignUp ? "Sign Up" : "Log In"}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={12}>
+              <Typography align="center" variant="subtitle1" color="red">
+                {error && `Error: ${error}`}
               </Typography>
             </Grid>
             {isSignUp && (
@@ -128,7 +138,7 @@ const Auth = () => {
             <Grid item xs={12} sm={12}>
               <Box textAlign="center">
                 <LoadingButton
-                  loading={isLoading}
+                  loading={isSignUp ? signupLoading : loginLoading}
                   fullWidth
                   variant="contained"
                   type="submit"

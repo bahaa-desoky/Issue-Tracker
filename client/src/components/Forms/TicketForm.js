@@ -36,6 +36,7 @@ const TicketForm = ({ projectId, projectName, currentId, setCurrentId }) => {
   const [addTicket, { isLoading: addLoading }] = useAddTicketMutation();
   const [updateTicket, { isLoading: updateLoading }] =
     useUpdateTicketMutation();
+  const [error, setError] = useState("");
   const ticket = useSelector((state) => {
     return currentId
       ? state.tickets.tickets.find((ticket) => ticket._id == currentId)
@@ -50,12 +51,16 @@ const TicketForm = ({ projectId, projectName, currentId, setCurrentId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // this prevents browser refresh
-    if (currentId) {
-      await updateTicket(ticketData);
-      setTicketData(ticketData);
-    } else {
-      await addTicket(ticketData);
-      clear();
+    try {
+      if (currentId) {
+        await updateTicket(ticketData);
+        setTicketData(ticketData);
+      } else {
+        await addTicket(ticketData);
+        clear();
+      }
+    } catch (e) {
+      setError(e.data.message);
     }
   };
 
@@ -81,6 +86,11 @@ const TicketForm = ({ projectId, projectName, currentId, setCurrentId }) => {
           <Grid item xs={12} sm={12}>
             <Typography variant="h6">
               {currentId ? "Edit an existing" : "Create a new"} ticket
+            </Typography>
+          </Grid>
+          <Grid item xs={12} sm={12}>
+            <Typography variant="subtitle1" color="red">
+              {error && `Error: ${error}`}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={12}>

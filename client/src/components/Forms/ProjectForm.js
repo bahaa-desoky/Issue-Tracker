@@ -21,6 +21,7 @@ const ProjectForm = ({ currentId, setCurrentId }) => {
   const [addProject, { isLoading: addLoading }] = useAddProjectMutation();
   const [updateProject, { isLoading: updateLoading }] =
     useUpdateProjectMutation();
+  const [error, setError] = useState("");
   const project = useSelector((state) => {
     return currentId
       ? state.projects.projects.find((project) => project._id == currentId)
@@ -35,12 +36,16 @@ const ProjectForm = ({ currentId, setCurrentId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (currentId) {
-      await updateProject(projectData);
-      setProjectData(projectData);
-    } else {
-      await addProject(projectData);
-      clear();
+    try {
+      if (currentId) {
+        await updateProject(projectData);
+        setProjectData(projectData);
+      } else {
+        await addProject(projectData);
+        clear();
+      }
+    } catch (e) {
+      setError(e.data.message);
     }
   };
 
@@ -64,6 +69,11 @@ const ProjectForm = ({ currentId, setCurrentId }) => {
           <Grid item xs={12} sm={12}>
             <Typography variant="h6">
               {currentId ? "Edit an existing" : "Create a new"} project
+            </Typography>
+          </Grid>
+          <Grid item xs={12} sm={12}>
+            <Typography variant="subtitle1" color="red">
+              {error && `Error: ${error}`}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={12}>
