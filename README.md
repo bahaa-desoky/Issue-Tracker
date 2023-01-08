@@ -1,5 +1,5 @@
 
-# [Issue tracker](https://issue-tracker-app.com/)
+# [Issue Tracker](https://issue-tracker-app.com/)
 
 Issue Tracker is a light web application that lets users create projects and add issue tickets for each project so that they can keep up-to-date and organized when working.
 
