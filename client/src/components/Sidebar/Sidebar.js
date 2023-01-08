@@ -32,7 +32,11 @@ const Sidebar = (props) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const [selected, setSelected] = useState(location.pathname.slice(1)); // to highlight selected drawer item
+  const [selected, setSelected] = useState(""); // to highlight selected drawer item
+
+  useEffect(() => {
+    setSelected(location.pathname.slice(1));
+  });
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
