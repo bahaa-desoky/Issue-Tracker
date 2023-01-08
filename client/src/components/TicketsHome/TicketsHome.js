@@ -7,7 +7,7 @@ const TicketsHome = () => {
   const [currentId, setCurrentId] = useState(null);
 
   return (
-    <Box sx={{ margin: "auto", width: "80vw" }}>
+    <Box sx={{ margin: "auto", width: "90vw" }}>
       <Typography variant="h4">All Tickets</Typography>
       <Box
         sx={{

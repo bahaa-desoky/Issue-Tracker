@@ -158,6 +158,7 @@ const Sidebar = (props) => {
           aria-label="open drawer"
           edge="start"
           onClick={handleDrawerToggle}
+          sx={{ marginLeft: "-20px" }} // to offset the margin and padding in styles.css. TODO: put styling in one location
         >
           <MenuIcon />
         </IconButton>

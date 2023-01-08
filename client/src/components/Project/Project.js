@@ -37,7 +37,7 @@ const Project = () => {
   return !project ? (
     <></>
   ) : (
-    <Box sx={{ margin: "auto", width: "80vw" }}>
+    <Box sx={{ margin: "auto", width: "90vw" }}>
       <Typography variant="h4">{project.title}</Typography>
       <Grid container alignItems="stretch" spacing={3}>
         <Grid item xs={12} sm={8}>
